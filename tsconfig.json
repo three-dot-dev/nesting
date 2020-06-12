@@ -12,6 +12,6 @@
     "baseUrl": "./src",
     "incremental": true
   },
-  "include": ["**/*.ts", "**/*.tsx"],
+  "include": ["**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }
