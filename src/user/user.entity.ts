@@ -5,7 +5,7 @@ import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from "typeorm"
 @Entity()
 export class UserEntity extends BaseEntity {
     @PrimaryGeneratedColumn("uuid")
-    @Field(type => String)
+    @Field(() => String)
     id: string
 
     @Column("varchar", { length: 500, unique: true, nullable: true })

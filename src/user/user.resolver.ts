@@ -5,19 +5,19 @@ import { UserService } from "./user.service"
 import { UserEntity } from "./user.entity"
 import { UserInput } from "./user.dto"
 
-@Resolver(of => UserEntity)
+@Resolver(() => UserEntity)
 export class UserResolver {
     constructor(
         @Inject(UserService)
         private userService: UserService
     ) {}
 
-    @Query(returns => [UserEntity])
+    @Query(() => [UserEntity])
     async getUsers(): Promise<UserEntity[]> {
         return await this.userService.findAll()
     }
 
-    @Mutation(returns => UserEntity)
+    @Mutation(() => UserEntity)
     async createUser(@Args("user") user: UserInput): Promise<UserEntity> {
         return await this.userService.create(user)
     }
