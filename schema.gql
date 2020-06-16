@@ -46,24 +46,22 @@ type Item {
 }
 
 type Mutation {
-  createUser(user: UserDTO!): UserModel!
+  createUser(user: UserInput!): UserModel!
 }
 
 type Query {
   getUsers: [UserModel!]!
 }
 
-input UserDTO {
-  name: String!
+input UserInput {
   email: String!
-  phone: String!
   password: String!
+  name: String!
 }
 
 type UserModel {
   id: String!
-  name: String!
   email: String!
-  phone: String!
   password: String!
+  name: String
 }
