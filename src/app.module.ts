@@ -13,7 +13,9 @@ import { typeOrmConfig } from "./config"
         GraphQLModule.forRoot({
             autoSchemaFile: "schema.gql",
             debug: true,
-            playground: true
+            playground: true,
+            context: ({ req }) => ({ req }),
+            fieldResolverEnhancers: ["guards"]
         }),
         TypeOrmModule.forRoot(typeOrmConfig)
     ],
