@@ -16,6 +16,10 @@ export class UserService {
         return this.usersRepository.find()
     }
 
+    findById(id: string): Promise<UserEntity> {
+        return this.usersRepository.findOne(id)
+    }
+
     async create(data: UserDTO): Promise<UserEntity> {
         const user = new UserEntity()
         user.name = data.name

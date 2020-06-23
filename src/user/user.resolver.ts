@@ -1,9 +1,12 @@
 import { Resolver, Query, Mutation, Args } from "@nestjs/graphql"
-import { Inject } from "@nestjs/common"
+import { Inject, UseGuards } from "@nestjs/common"
 
 import { UserService } from "./user.service"
 import { UserEntity } from "./user.entity"
 import { UserInput } from "./user.dto"
+
+import { CurrentUser } from "./user.decorator"
+import { GqlAuthGuard } from "../auth/auth.guard"
 
 @Resolver(() => UserEntity)
 export class UserResolver {
@@ -15,6 +18,12 @@ export class UserResolver {
     @Query(() => [UserEntity])
     async getUsers(): Promise<UserEntity[]> {
         return await this.userService.findAll()
+    }
+
+    @Query(() => UserEntity)
+    @UseGuards(GqlAuthGuard)
+    getUserById(@CurrentUser() user: UserEntity): Promise<UserEntity> {
+        return this.userService.findById(user.id)
     }
 
     @Mutation(() => UserEntity)
