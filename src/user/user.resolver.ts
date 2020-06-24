@@ -1,12 +1,12 @@
-import { Resolver, Query, Mutation, Args } from "@nestjs/graphql"
+import { Resolver, Query, Mutation, Args, Context } from "@nestjs/graphql"
 import { Inject, UseGuards } from "@nestjs/common"
 
 import { UserService } from "./user.service"
 import { UserEntity } from "./user.entity"
-import { UserInput } from "./user.dto"
+import { UserInput, UserDTO } from "./user.dto"
 
-import { CurrentUser } from "./user.decorator"
-import { GqlAuthGuard } from "../auth/auth.guard"
+// import { CurrentUser } from "./user.decorator"
+import { AuthGuard } from "./user.guard"
 
 @Resolver(() => UserEntity)
 export class UserResolver {
@@ -15,19 +15,28 @@ export class UserResolver {
         private userService: UserService
     ) {}
 
-    @Query(() => [UserEntity])
+    @Query(() => UserDTO)
+    @UseGuards(new AuthGuard())
+    async getUser(@Context("user") user: UserInput): Promise<UserDTO> {
+        return await user
+    }
+
+    @Query(() => [UserDTO])
     async getUsers(): Promise<UserEntity[]> {
         return await this.userService.findAll()
     }
 
-    @Query(() => UserEntity)
-    @UseGuards(GqlAuthGuard)
-    getUserById(@CurrentUser() user: UserEntity): Promise<UserEntity> {
-        return this.userService.findById(user.id)
-    }
+    // @Query(() => UserDTO)
+    // async getUserByName(@CurrentUser() user: UserEntity): Promise<UserEntity> {
+    //     return await this.userService.findByName(user.name)
+    // }
 
-    @Mutation(() => UserEntity)
-    async createUser(@Args("user") user: UserInput): Promise<UserEntity> {
-        return await this.userService.create(user)
+    @Mutation(() => String)
+    async loginUser(@Args("data") data: UserInput): Promise<string> {
+        let user = await this.userService.findByEmail(data.email)
+        if (!user) {
+            user = await this.userService.create({ ...data })
+        }
+        return this.userService.createToken(user)
     }
 }
