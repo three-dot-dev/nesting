@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common"
 import { InjectRepository } from "@nestjs/typeorm"
 import { Repository } from "typeorm"
+import * as jwt from "jsonwebtoken"
 
 import { UserEntity } from "./user.entity"
 import { UserDTO } from "./user.dto"
@@ -12,22 +13,23 @@ export class UserService {
         private usersRepository: Repository<UserEntity>
     ) {}
 
+    createToken({ id, email, password, name }: UserEntity) {
+        return jwt.sign({ id, email, password, name }, "secret")
+    }
+
     findAll(): Promise<UserEntity[]> {
         return this.usersRepository.find()
     }
 
-    findById(id: string): Promise<UserEntity> {
-        return this.usersRepository.findOne(id)
+    findByName(name: string): Promise<UserEntity> {
+        return this.usersRepository.findOne({ name })
     }
 
-    async create(data: UserDTO): Promise<UserEntity> {
-        const user = new UserEntity()
-        user.name = data.name
-        user.email = data.email
-        user.password = data.password
+    findByEmail(email: string): Promise<UserEntity> {
+        return this.usersRepository.findOne({ email })
+    }
 
-        await this.usersRepository.save(user)
-
-        return user
+    create(data: UserDTO): Promise<UserEntity> {
+        return this.usersRepository.create({ ...data }).save()
     }
 }
