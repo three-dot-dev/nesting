@@ -14,8 +14,7 @@ import { typeOrmConfig } from "./config"
             autoSchemaFile: "schema.gql",
             debug: true,
             playground: true,
-            context: ({ req }) => ({ req }),
-            fieldResolverEnhancers: ["guards"]
+            context: ({ req }) => ({ headers: req.headers })
         }),
         TypeOrmModule.forRoot(typeOrmConfig)
     ],
