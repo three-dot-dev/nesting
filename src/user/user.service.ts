@@ -13,8 +13,12 @@ export class UserService {
         private usersRepository: Repository<UserEntity>
     ) {}
 
-    createToken({ id, email, password, name }: UserEntity) {
+    createToken({ id, email, password, name }: UserEntity): string {
         return jwt.sign({ id, email, password, name }, "secret")
+    }
+
+    findOneById(userId: string): Promise<UserEntity> {
+        return this.usersRepository.findOne(userId)
     }
 
     findAll(): Promise<UserEntity[]> {

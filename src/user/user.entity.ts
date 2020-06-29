@@ -1,5 +1,6 @@
 import { ObjectType, Field } from "@nestjs/graphql"
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, OneToMany } from "typeorm"
+import { PokemonEntity } from "pokemon/pokemon.entity"
 
 @ObjectType()
 @Entity("user")
@@ -16,4 +17,14 @@ export class UserEntity extends BaseEntity {
 
     @Column("varchar", { length: 500, nullable: true })
     name?: string
+
+    @OneToMany(
+        () => PokemonEntity,
+        pokemon => pokemon.owner,
+        {
+            eager: true,
+            onDelete: "CASCADE"
+        }
+    )
+    pokemons: PokemonEntity[]
 }
