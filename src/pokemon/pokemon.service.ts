@@ -1,30 +1,34 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Injectable } from "@nestjs/common"
+import { InjectRepository } from "@nestjs/typeorm"
+import { Repository } from "typeorm"
 
-import { PokemonEntity } from './pokemon.entity';
-import { PokemonInput } from './pokemon.dto';
+import { PokemonEntity } from "./pokemon.entity"
+import { PokemonInput } from "./pokemon.dto"
 
 @Injectable()
 export class PokemonService {
-  constructor(
-    @InjectRepository(PokemonEntity)
-    private pokemonRepository: Repository<PokemonEntity>,
-  ) {}
+    constructor(
+        @InjectRepository(PokemonEntity)
+        private pokemonRepository: Repository<PokemonEntity>
+    ) {}
 
-  createPokemon(data: PokemonInput): Promise<PokemonEntity> {
-    return this.pokemonRepository.create({ ...data }).save();
-  }
+    createPokemon(data: PokemonInput, userId: string): Promise<PokemonEntity> {
+        return this.pokemonRepository.create({ ...data, ownerId: userId }).save()
+    }
 
-  getPokemons(): Promise<PokemonEntity[]> {
-    return this.pokemonRepository.find();
-  }
+    getPokemons(): Promise<PokemonEntity[]> {
+        return this.pokemonRepository.find()
+    }
 
-  getPokemonByName(name: string): Promise<PokemonEntity> {
-    return this.pokemonRepository.findOne({ name });
-  }
+    getPokemonByOwnerId(ownerId: string): Promise<PokemonEntity[]> {
+        return this.pokemonRepository.find({ ownerId })
+    }
 
-  getPokemonById(id: string): Promise<PokemonEntity> {
-    return this.pokemonRepository.findOne({ id });
-  }
+    getPokemonByName(name: string): Promise<PokemonEntity> {
+        return this.pokemonRepository.findOne({ name })
+    }
+
+    getPokemonById(id: string): Promise<PokemonEntity> {
+        return this.pokemonRepository.findOne({ id })
+    }
 }

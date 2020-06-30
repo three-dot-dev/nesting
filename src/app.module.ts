@@ -6,10 +6,12 @@ import { UserModule } from "./user/user.module"
 import { AppController } from "./app.controller"
 import { AppService } from "./app.service"
 import { typeOrmConfig } from "./config"
+import { PokemonModule } from "pokemon/pokemon.module"
 
 @Module({
     imports: [
         UserModule,
+        PokemonModule,
         GraphQLModule.forRoot({
             autoSchemaFile: "schema.gql",
             debug: true,

@@ -15,10 +15,10 @@ export class UserResolver {
         private userService: UserService
     ) {}
 
-    @Query(() => UserDTO)
+    @Query(() => UserEntity)
     @UseGuards(new AuthGuard())
-    async getUser(@Context("user") user: UserInput): Promise<UserDTO> {
-        return await user
+    async getUser(@Context("user") user: UserEntity): Promise<UserEntity> {
+        return this.userService.findOneById(user.id)
     }
 
     @Query(() => [UserDTO])
