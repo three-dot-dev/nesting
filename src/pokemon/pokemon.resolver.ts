@@ -13,7 +13,7 @@ export class PokemonResolver {
     constructor(@Inject(PokemonService) private pokemonService: PokemonService) {}
 
     @Mutation(() => PokemonDTO)
-    @UseGuards(new AuthGuard())
+    @UseGuards(AuthGuard)
     // @TODO change user type from UserEntity to JwtPayload
     async createPokemon(@Args("data") data: PokemonInput, @Context("user") user: UserEntity): Promise<PokemonEntity> {
         let pokemon = await this.pokemonService.getPokemonByName(data.name)
@@ -24,7 +24,7 @@ export class PokemonResolver {
     }
 
     @Query(() => [PokemonEntity])
-    @UseGuards(new AuthGuard())
+    @UseGuards(AuthGuard)
     // @TODO change user type from UserEntity to JwtPayload
     async getPokemonsByOwnerId(@Context("user") user: UserEntity): Promise<PokemonEntity[]> {
         return this.pokemonService.getPokemonByOwnerId(user.id)

@@ -3,7 +3,7 @@ import { Inject, UseGuards } from "@nestjs/common"
 
 import { UserService } from "./user.service"
 import { UserEntity } from "./user.entity"
-import { UserInput, UserDTO } from "./user.dto"
+import { UserInput, UserDTO, LoginResponseDto } from "./user.dto"
 
 // import { CurrentUser } from "./user.decorator"
 import { AuthGuard } from "./user.guard"
@@ -16,7 +16,7 @@ export class UserResolver {
     ) {}
 
     @Query(() => UserEntity)
-    @UseGuards(new AuthGuard())
+    @UseGuards(AuthGuard)
     async getUser(@Context("user") user: UserEntity): Promise<UserEntity> {
         return this.userService.findOneById(user.id)
     }
@@ -31,12 +31,12 @@ export class UserResolver {
     //     return await this.userService.findByName(user.name)
     // }
 
-    @Mutation(() => String)
-    async loginUser(@Args("data") data: UserInput): Promise<string> {
+    @Mutation(() => LoginResponseDto)
+    async loginUser(@Args("data") data: UserInput): Promise<{ accessToken: string }> {
         let user = await this.userService.findByEmail(data.email)
         if (!user) {
             user = await this.userService.create({ ...data })
         }
-        return this.userService.createToken(user)
+        return this.userService.createToken(user.id, user.email)
     }
 }
