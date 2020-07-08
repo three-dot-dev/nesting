@@ -5,6 +5,7 @@ import * as jwt from "jsonwebtoken"
 
 import { UserEntity } from "./user.entity"
 import { UserDTO } from "./user.dto"
+import { JwtPayloadDto } from "./jwt_payload.dto"
 
 @Injectable()
 export class UserService {
@@ -13,8 +14,14 @@ export class UserService {
         private usersRepository: Repository<UserEntity>
     ) {}
 
-    createToken({ id, email, password, name }: UserEntity): string {
-        return jwt.sign({ id, email, password, name }, "secret")
+    createToken(id: string, email: string): { accessToken: string } {
+        const jwtPayload: JwtPayloadDto = {
+            id,
+            email
+        }
+
+        const accessToken = jwt.sign(jwtPayload, "secret", { expiresIn: 36000 })
+        return { accessToken: `Bearer ${accessToken}` }
     }
 
     findOneById(userId: string): Promise<UserEntity> {

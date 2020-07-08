@@ -14,3 +14,8 @@ export class UserInput {
     @Field() readonly password: string
     @Field() readonly name?: string
 }
+@ObjectType()
+export class LoginResponseDto {
+    @Field()
+    accessToken: string
+}

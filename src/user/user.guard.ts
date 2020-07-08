@@ -1,10 +1,23 @@
-import { ExecutionContext, Injectable, CanActivate, HttpException, HttpStatus } from "@nestjs/common"
+import {
+    ExecutionContext,
+    Injectable,
+    CanActivate,
+    HttpException,
+    HttpStatus,
+    Inject,
+    InternalServerErrorException,
+    UnauthorizedException
+} from "@nestjs/common"
 import { GqlExecutionContext } from "@nestjs/graphql"
 // import { AuthGuard } from '@nestjs/passport';
 import * as jwt from "jsonwebtoken"
+import { JwtPayloadDto } from "./jwt_payload.dto"
+import { UserService } from "./user.service"
 
 @Injectable()
 export class AuthGuard implements CanActivate {
+    constructor(@Inject(UserService) private userService: UserService) {}
+
     async canActivate(context: ExecutionContext): Promise<any> {
         const ctx = GqlExecutionContext.create(context).getContext()
 
@@ -12,7 +25,16 @@ export class AuthGuard implements CanActivate {
             return false
         }
 
-        ctx.user = await this.validateToken(ctx.headers.authorization)
+        const jwtPayload = (await this.validateToken(ctx.headers.authorization)) as JwtPayloadDto
+        try {
+            const user = this.userService.findOneById(jwtPayload.id)
+            if (!user) {
+                throw new UnauthorizedException()
+            }
+            ctx.user = user
+        } catch (e) {
+            throw new InternalServerErrorException()
+        }
         return true
     }
 
